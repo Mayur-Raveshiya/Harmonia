@@ -13,8 +13,6 @@ Harmonia isn't just another music platform—it's an emotion-driven experience t
 💻 Tech Stack & Features
 🌐 Frontend (HTML & CSS) – A responsive, visually captivating interface designed to provide a seamless user experience.
 
-🛠 Backend (Node.js & Express) – A lightweight yet powerful server-side structure to handle user interactions efficiently.
-
 📱 Smooth Navigation & Performance – The UI is designed for fast rendering and accessibility across all devices.
 
 🔗 Real-Time User Engagement – Interactive elements like mood-based selections enhance user involvement and satisfaction.

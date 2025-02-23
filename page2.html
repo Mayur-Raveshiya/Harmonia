@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harmonia - Mood-Based Music Player</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            min-height: 100vh;
+            color: #fff;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            text-align: center;
+        }
+        .mood {
+            cursor: pointer;
+            padding: 15px 20px;
+            border-radius: 10px;
+            background: #0f3460;
+            margin: 10px;
+            font-weight: bold;
+            transition: transform 0.3s ease, background 0.3s;
+        }
+        .mood:hover {
+            background: #533483;
+            transform: scale(1.1);
+        }
+        .controls {
+            margin-top: 20px;
+        }
+        button {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #d72340;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="text-3xl font-bold mb-6">Select Your Mood</h1>
+    <div class="flex flex-wrap justify-center">
+        <div class="mood" onclick="playMood('happy')">Happy</div>
+        <div class="mood" onclick="playMood('angry')">Angry</div>
+        <div class="mood" onclick="playMood('motivated')">Motivated</div>
+        <div class="mood" onclick="playMood('relaxed')">Relaxed</div>
+        <div class="mood" onclick="playMood('romantic')">Romantic</div>
+        <div class="mood" onclick="playMood('sad')">Sad</div>
+    </div>
+    
+    <h2 class="text-xl mt-6" id="songTitle">Now Playing: Nothing</h2>
+    <audio id="audioPlayer" controls></audio>
+    <div class="controls">
+        <button onclick="playNext()">⏮</button>
+        <button onclick="playNext()">⏭</button>
+
+    </div>
+    
+    <script>
+        const songs = {
+            happy: ["https://www.dropbox.com/scl/fo/tjvnwejbro74cehm9v06y/AHgP3AIOD-xgxVduqtDDsqo/Happy/happy_english_1.mp3?rlkey=lvtb5gmu13kgskn822e88zvu7&raw=1", "https://www.dropbox.com/scl/fo/tjvnwejbro74cehm9v06y/AGFyajOfy53a63h1qSutKY8/Happy/happy_english_2.mp3?rlkey=lvtb5gmu13kgskn822e88zvu7&raw=1"],
+            angry: ["https://www.dropbox.com/scl/fo/tjvnwejbro74cehm9v06y/AEsPVS5meRW7zjk-Z7OvodI/Angry/angry_english_1.mp3?rlkey=lvtb5gmu13kgskn822e88zvu7&raw=1", "https://www.dropbox.com/scl/fo/tjvnwejbro74cehm9v06y/ABtOpE2PPCxtMIIhYu3s-iI/Angry/angry_english_2.mp3?rlkey=lvtb5gmu13kgskn822e88zvu7&raw=1", "https://www.dropbox.com/scl/fo/tjvnwejbro74cehm9v06y/ADicSe8cAb5x_xgP4bVW2jA/Angry/angry_english_3.mp3?rlkey=lvtb5gmu13kgskn822e88zvu7&raw=1", "https://www.dropbox.com/scl/fo/tjvnwejbro74cehm9v06y/APCEmL8gF_73xXnmO_AH_to/Angry/angry_hindi_1.mp3?rlkey=lvtb5gmu13kgskn822e88zvu7&raw=1", "https://www.dropbox.com/scl/fo/tjvnwejbro74cehm9v06y/ADzf8mskgHt3RLaTcq1XDWk/Angry/angry_hindi_3.mp3?rlkey=lvtb5gmu13kgskn822e88zvu7&raw=1"],
+            motivated: ["https://www.dropbox.com/scl/fo/tjvnwejbro74cehm9v06y/AG_hE5-xytxJMZWyuOVv7T4/Motivated/motivated_english_1.mp3?rlkey=lvtb5gmu13kgskn822e88zvu7&raw=1", "https://www.dropbox.com/scl/fo/tjvnwejbro74cehm9v06y/ANV1MmFeWwr1lgqb1HJQC5w/Motivated/motivated_english_2.mp3?rlkey=lvtb5gmu13kgskn822e88zvu7&raw=1"],
+            relaxed: ["https://ucb0621b2b67eb7a32934b9d8937.dl.dropboxusercontent.com/cd/0/inline/Ckp0-clsqq8q0J86O8YKfINO4Vj7OUwk_ICriwnfV-J-ZQtRSZ6kpYsZVy9jgGvQ_on2BAseyONTKD00jtcMY_OHWQHH5CFT2WiUQpd12Y89EX8NOf7SzbwtnGZtaptMQLv5Yy5dEZd5fBwRyYjR3ByQ/file#", "https://uc17f73d4b5fe1993637b4a52e4a.dl.dropboxusercontent.com/cd/0/inline/CkrZaL04uG1Ev2sbfsMnZfiiw5Pl1eNnutf2Jq7S08HP6Wlnda5TUTa0_1TfWwo7ovtKkKTZHYxEdx1VmnoDvqLLO4EVA81CIyy5N_Yfi_tUtu_kEZyvAOt-hIvBqmx-xoIqTn_qM-_Od8ew3L9iZdjr/file#"],
+            romantic: ["https://www.dropbox.com/scl/fo/tjvnwejbro74cehm9v06y/AHFJczCgKYOZegaObqt6TgU/Romantic/romantic_english_1.mp3?rlkey=fkr8ymgnorssjed41i94zad6v&dl=0", "https://uc3099cdc93dcf782701db175c84.dl.dropboxusercontent.com/cd/0/inline/CkoPlzzsHZki4MoShA_Cya0-ujlM1piCHhZHnAPaRf6Nkyh6V4UGd73MrcrBNftHA-Y8bnSc1cIdZen19Zxv7iCj_CFcewpL4H0ozPhMJxpHiJGfxBYuTfFSJjdOqBRjHXqUu8GyDM6GR3JJjXyMmk-S/file#"],
+            sad: ["https://www.dropbox.com/scl/fo/tjvnwejbro74cehm9v06y/ACl9oRH9QeoK1JEBxxQpRrQ/Sad/sad_english_1.mp3?rlkey=lvtb5gmu13kgskn822e88zvu7&raw=1", "https://www.dropbox.com/scl/fo/tjvnwejbro74cehm9v06y/AHosgCZ_6KcCyDTSRaFQMv0/Sad/sad_english_2.mp3?rlkey=lvtb5gmu13kgskn822e88zvu7&raw=1"],
+        };
+
+        let currentMood = "";
+        let currentIndex = 0;
+
+        function playMood(mood) {
+            currentMood = mood;
+            playNext();
+        }
+
+        function playNext() {
+            if (currentMood && songs[currentMood].length > 0) {
+                currentIndex = Math.floor(Math.random() * songs[currentMood].length);
+                document.getElementById("audioPlayer").src = songs[currentMood][currentIndex];
+                document.getElementById("audioPlayer").play();
+                document.getElementById("songTitle").innerText = `Now Playing: ${currentMood}`;
+            }
+        }
+
+        function pauseSong() {
+            document.getElementById("audioPlayer").pause();
+        }
+
+        function resumeSong() {
+            document.getElementById("audioPlayer").play();
+        }
+    </script>
+</body>
+</html>
